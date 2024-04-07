@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>ru.sberbank</groupId>
 	<artifactId>elasticsearchplayground</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>elasticsearchplayground</name>
-	<description>Demo project for Spring Boot, REST and JPA Buddy</description>
+	<description>Demo project for Alexey and Anton using Spring Boot, Elasticsearch</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -26,6 +26,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-elasticsearch</artifactId>
+			<version>4.0.5.RELEASE</version>
 		</dependency>
 	</dependencies>
 
