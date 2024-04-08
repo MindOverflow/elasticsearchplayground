@@ -82,3 +82,13 @@ xpack.security.transport.ssl:
   keystore.path: certs/transport.p12
   truststore.path: certs/transport.p12
 ```
+Как правильно настраивать в текущей версии `5.2.4` пакета `spring-data-elasticsearch`
+```xml
+<dependency>
+    <groupId>org.springframework.data</groupId>
+    <artifactId>spring-data-elasticsearch</artifactId>
+    <version>5.2.4</version>
+</dependency>
+```
+[конфигурацию подключения к elasticsearch](https://docs.spring.io/spring-data/elasticsearch/reference/elasticsearch/clients.html#elasticsearch.clients.configuration)
+Пакет `spring-data-elasticsearch` версии `5.2.4` подключен к приложению `ru.sberbank.elasticsearchplayground.ElasticsearchplaygroundApplication` 
