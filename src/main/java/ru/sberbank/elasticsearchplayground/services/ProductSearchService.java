@@ -1,28 +1,18 @@
-package ru.sberbank.elasticsearchplayground.services;
+ package ru.sberbank.elasticsearchplayground.services;
 
+ import lombok.extern.slf4j.Slf4j;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+ import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
+ import org.springframework.data.elasticsearch.core.SearchHits;
+ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+ import org.springframework.data.elasticsearch.core.query.*;
+ import org.springframework.stereotype.Service;
+ import ru.sberbank.elasticsearchplayground.models.Product;
 
-//import org.elasticsearch.index.query.QueryBuilder;
-//import org.elasticsearch.index.query.QueryBuilders;
-
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
-import org.springframework.data.elasticsearch.core.SearchHits;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.IndexQuery;
-import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.Query;
-import org.springframework.data.elasticsearch.core.query.StringQuery;
-import org.springframework.stereotype.Service;
-import ru.sberbank.elasticsearchplayground.models.Product;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,7 +20,7 @@ public class ProductSearchService {
 
     private static final String PRODUCT_INDEX = "productindex";
 
-    private ElasticsearchOperations elasticsearchOperations;
+    private final ElasticsearchOperations elasticsearchOperations;
 
     @Autowired
     public ProductSearchService(final ElasticsearchOperations elasticsearchOperations) {
@@ -67,22 +57,23 @@ public class ProductSearchService {
 
     public List<String> fetchSuggestions(String query) {
 
-        //SearchRequest
+//        QueryBuilder queryBuilder = QueryBuilders
+//                .wildcardQuery("name", query+"*");
+
 //        Query searchQuery = new NativeSearchQueryBuilder()
 //                .withFilter(queryBuilder)
 //                .withPageable(PageRequest.of(0, 5))
 //                .build();
 
-//        SearchHits<Product> searchSuggestions =
-//                elasticsearchOperations.search(searchQuery,
-//                        Product.class,
-//                        IndexCoordinates.of(PRODUCT_INDEX));
 
-        List<String> suggestions = new ArrayList<String>();
+        Criteria criteria = new Criteria("name").contains(query);
 
-//        searchSuggestions.getSearchHits().forEach(searchHit -> {
-//            suggestions.add(searchHit.getContent().getName());
-//        });
+        Query searchQuery = new CriteriaQuery(criteria);
+        SearchHits<Product> searchSuggestions = elasticsearchOperations.search(searchQuery, Product.class, IndexCoordinates.of(PRODUCT_INDEX));
+
+        List<String> suggestions = new ArrayList<>();
+
+        searchSuggestions.getSearchHits().forEach(searchHit -> suggestions.add(searchHit.getContent().getName()));
         return suggestions;
     }
 
