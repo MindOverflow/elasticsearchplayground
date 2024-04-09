@@ -2,6 +2,8 @@
 
  import lombok.extern.slf4j.Slf4j;
  import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.data.domain.PageRequest;
+ import org.springframework.data.domain.Pageable;
  import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
  import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
  import org.springframework.data.elasticsearch.core.SearchHits;
@@ -69,6 +71,8 @@ public class ProductSearchService {
         Criteria criteria = new Criteria("name").contains(query);
 
         Query searchQuery = new CriteriaQuery(criteria);
+        Pageable pageable = PageRequest.of(0, 15);
+        searchQuery.setPageable(pageable);
         SearchHits<Product> searchSuggestions = elasticsearchOperations.search(searchQuery, Product.class, IndexCoordinates.of(PRODUCT_INDEX));
 
         List<String> suggestions = new ArrayList<>();
