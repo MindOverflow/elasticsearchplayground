@@ -8,9 +8,15 @@
  import org.springframework.data.elasticsearch.core.IndexedObjectInformation;
  import org.springframework.data.elasticsearch.core.SearchHits;
  import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
- import org.springframework.data.elasticsearch.core.query.*;
+ import org.springframework.data.elasticsearch.core.query.Criteria;
+ import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+ import org.springframework.data.elasticsearch.core.query.IndexQuery;
+ import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
+ import org.springframework.data.elasticsearch.core.query.Query;
+ import org.springframework.data.elasticsearch.core.query.StringQuery;
  import org.springframework.stereotype.Service;
  import ru.sberbank.elasticsearchplayground.models.Product;
+ import ru.sberbank.elasticsearchplayground.repositories.ProductRepository;
 
  import java.util.ArrayList;
  import java.util.List;
@@ -23,11 +29,13 @@ public class ProductSearchService {
     private static final String PRODUCT_INDEX = "productindex";
 
     private final ElasticsearchOperations elasticsearchOperations;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public ProductSearchService(final ElasticsearchOperations elasticsearchOperations) {
+    public ProductSearchService(final ElasticsearchOperations elasticsearchOperations, final ProductRepository productRepository) {
         super();
         this.elasticsearchOperations = elasticsearchOperations;
+        this.productRepository = productRepository;
     }
 
     public String createProductIndex(Product product) {
@@ -81,5 +89,28 @@ public class ProductSearchService {
         return suggestions;
     }
 
+    public List<Product> processSearch(final String query) {
+        log.info("Search with query {}", query);
 
+        // 1. Create query on multiple fields enabling fuzzy search
+        Criteria criteria = new Criteria("name").and("description").contains(query);
+        Query searchQuery = new CriteriaQuery(criteria);
+
+        // 2. Execute search
+        SearchHits<Product> productHits =
+                elasticsearchOperations
+                        .search(searchQuery, Product.class,
+                                IndexCoordinates.of(PRODUCT_INDEX));
+
+        // 3. Map searchHits to product list
+        List<Product> productMatches = new ArrayList<Product>();
+        productHits.forEach(srchHit->{
+            productMatches.add(srchHit.getContent());
+        });
+        return productMatches;
+    }
+
+    public List<Product> fetchProductNamesContaining(final String name){
+        return productRepository.findByNameContaining(name);
+    }
 }
