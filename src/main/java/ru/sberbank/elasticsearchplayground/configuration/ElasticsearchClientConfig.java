@@ -1,5 +1,6 @@
 package ru.sberbank.elasticsearchplayground.configuration;
 
+import lombok.NonNull;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
 
@@ -24,9 +24,10 @@ import java.security.cert.CertificateFactory;
 @ComponentScan(basePackages = {"ru.sberbank.elasticsearchplayground"})
 public class ElasticsearchClientConfig extends ElasticsearchConfiguration {
     @Override
-    public ClientConfiguration clientConfiguration() {
-        Path caCertificatePath = Paths.get("/etc/elasticsearch/certs/http_ca.crt");
-        CertificateFactory certificateFactory = null;
+    @NonNull
+    public ClientConfiguration clientConfiguration()  {
+        Path caCertificatePath = Paths.get("/http_ca.crt");
+        CertificateFactory certificateFactory;
         try {
             certificateFactory = CertificateFactory.getInstance("X.509");
             Certificate trustedCa;
@@ -38,16 +39,17 @@ public class ElasticsearchClientConfig extends ElasticsearchConfiguration {
             trustStore.setCertificateEntry("ca", trustedCa);
             SSLContextBuilder sslContextBuilder = SSLContexts.custom().loadTrustMaterial(trustStore, null);
             final SSLContext sslContext = sslContextBuilder.build();
-        } catch (CertificateException e) {
+
+            return ClientConfiguration
+                    .builder()
+                    .connectedTo("185.198.152.125:9200")
+                    .usingSsl(sslContext)
+                    .build();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
 
-        return ClientConfiguration
-                .builder()
-                .connectedTo("185.198.152.125:9200")
-                // TODO: remove it later: javax.net.ssl.SSLContext
-                .usingSsl()
-                .build();
+
     }
 }

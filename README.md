@@ -1,20 +1,20 @@
 ### Приложение для работы с тестовым elasticsearch-сервером ###
 
-Сервер, на котором запущен Elasticsearch:
+Сервер, на котором запущен Elasticsearch: <br />
 ```textmate
 185.198.152.125
 ```
-Подключиться к серверу можно, выполнив в командной строке команду:
+Подключиться к серверу можно, выполнив в командной строке команду: <br />
 ```text
 ssh root@185.198.152.125
 ```
 [Выполнение установки elasticsearch на Ubuntu](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html)
 
-Если все свойства безопасности на сервере переведены в значение false, то в таком случае, проверить, что elasticsearch работает корректно - можно с помощью команды:
+Если все свойства безопасности на сервере переведены в значение false, то в таком случае, проверить, что elasticsearch работает корректно - можно с помощью команды: <br />
 ```shell
 curl -X GET https://localhost:9200
 ```
-Если служба linux elasticsearch работает корректно, то тогда ответ на запрос будет примерно такой:
+Если служба linux elasticsearch работает корректно, то тогда ответ на запрос будет примерно такой: <br />
 ```json
 {
   "name" : "elasticexperiments.ru",
@@ -34,16 +34,16 @@ curl -X GET https://localhost:9200
   "tagline" : "You Know, for Search"
 }
 ```
-Конфигурация elasticsearch находится на сервере в папке:
+Конфигурация elasticsearch находится на сервере в папке: <br />
 ```shell
 cd /etc/elasticsearch
 ```
-Можно сразу же отредактировать конфигурацию в файле `/etc/elasticsearch/elasticsearch.yml` с помощью midnight commander, выполнив команду на сервере:
+Можно сразу же отредактировать конфигурацию в файле `/etc/elasticsearch/elasticsearch.yml` с помощью midnight commander, выполнив команду на сервере: <br />
 ```shell
  mcedit /etc/elasticsearch/elasticsearch.yml
 ```
 
-Для того чтобы при подключении к elasticsearch ничего не требовалось, в файле `/etc/elasticsearch/elasticsearch.yml` заданы следующие настройки
+Для того чтобы при подключении к elasticsearch ничего не требовалось, в файле `/etc/elasticsearch/elasticsearch.yml` заданы следующие настройки <br />
 ```yaml
 # Enable security features
 xpack.security.enabled: false
@@ -63,7 +63,7 @@ xpack.security.transport.ssl:
 #  truststore.path: certs/transport.p12
 ```
 
-Базовая установка и запуск elasticsearch выполняются с такими нстройками безопасности:
+Базовая установка и запуск elasticsearch выполняются с такими нстройками безопасности: <br />
 ```yaml
 # Enable security features
 xpack.security.enabled: true
@@ -82,7 +82,7 @@ xpack.security.transport.ssl:
   keystore.path: certs/transport.p12
   truststore.path: certs/transport.p12
 ```
-Как правильно настраивать в текущей версии `5.2.4` пакета `spring-data-elasticsearch`
+Как правильно настраивать в текущей версии `5.2.4` пакета `spring-data-elasticsearch` <br />
 ```xml
 <dependency>
     <groupId>org.springframework.data</groupId>
@@ -91,4 +91,18 @@ xpack.security.transport.ssl:
 </dependency>
 ```
 [конфигурацию подключения к elasticsearch](https://docs.spring.io/spring-data/elasticsearch/reference/elasticsearch/clients.html#elasticsearch.clients.configuration)
-Пакет `spring-data-elasticsearch` версии `5.2.4` подключен к приложению `ru.sberbank.elasticsearchplayground.ElasticsearchplaygroundApplication` 
+Пакет `spring-data-elasticsearch` версии `5.2.4` подключен к приложению `ru.sberbank.elasticsearchplayground.ElasticsearchplaygroundApplication` <br />
+
+### Как, на примере файла `/etc/elasticsearch/certs/http_ca.crt`, положить его в папку, в которой исполняется команда scp:
+```shell
+$ scp root@185.198.152.125:/etc/elasticsearch/certs/http_ca.crt .
+root@185.198.152.125's password:
+```
+необходимо ввести пароль: <br />
+```shell
+12345678
+```
+результат выполнения команды на примере папки проекта `src/main/java/ru/sberbank/elasticsearchplayground/configuration` <br />
+```shell
+http_ca.crt                                                                                                                               100% 1915    31.7KB/s   00:00
+```
