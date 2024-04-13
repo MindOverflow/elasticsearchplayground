@@ -28,14 +28,7 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public String search(Model model) {
-        List<Product> products = productSearchService.fetchProductNamesContaining("Hornby");
-
-        List<String> names = products.stream().flatMap(prod->{
-            return Stream.of(prod.getName());
-        }).collect(Collectors.toList());
-        log.info("product names {}", names);
-        model.addAttribute("names", names);
+    public String search() {
         return "search.html";
     }
 
