@@ -66,16 +66,6 @@ public class ProductSearchService {
     }
 
     public List<String> fetchSuggestions(String query) {
-
-//        QueryBuilder queryBuilder = QueryBuilders
-//                .wildcardQuery("name", query+"*");
-
-//        Query searchQuery = new NativeSearchQueryBuilder()
-//                .withFilter(queryBuilder)
-//                .withPageable(PageRequest.of(0, 5))
-//                .build();
-
-
         Criteria criteria = new Criteria("name").contains(query);
 
         Query searchQuery = new CriteriaQuery(criteria);
@@ -92,25 +82,18 @@ public class ProductSearchService {
     public List<Product> processSearch(final String query) {
         log.info("Search with query {}", query);
 
-        // 1. Create query on multiple fields enabling fuzzy search
         Criteria criteria = new Criteria("name").and("description").contains(query);
         Query searchQuery = new CriteriaQuery(criteria);
 
-        // 2. Execute search
         SearchHits<Product> productHits =
                 elasticsearchOperations
                         .search(searchQuery, Product.class,
                                 IndexCoordinates.of(PRODUCT_INDEX));
 
-        // 3. Map searchHits to product list
         List<Product> productMatches = new ArrayList<Product>();
         productHits.forEach(srchHit->{
             productMatches.add(srchHit.getContent());
         });
         return productMatches;
-    }
-
-    public List<Product> fetchProductNamesContaining(final String name){
-        return productRepository.findByNameContaining(name);
     }
 }
